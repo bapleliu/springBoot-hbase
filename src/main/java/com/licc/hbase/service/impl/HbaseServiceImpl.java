@@ -39,10 +39,10 @@ import java.util.Set;
 public class HbaseServiceImpl implements HbaseService {
     //过滤字段
     private static final String fileterColumns = "FAMILY_NAME,FAMILY_NAME_BYTES,JSpider_,TAB_NAME,TABLE_PREFIX";
-    private  Class<?> tClass;
+    private Class<?> tClass;
     @Autowired
     private HbaseTemplate hbaseTemplate;
-    RowMapper<Object> rowMapper = new RowMapper<Object>(){
+    RowMapper<Object> rowMapper = new RowMapper<Object>() {
 
         @Override
         public Object mapRow(Result result, int i) throws Exception {
@@ -64,12 +64,12 @@ public class HbaseServiceImpl implements HbaseService {
                                 JSONObject proceList = JSONObject.parseObject(val);
                                 reflect.set(cloumName, proceList);
                             } else if (reflect.field0(cloumName).getGenericType() == Reflect.on(Integer.class).type()) {
-                                 val = val.replace("[^0-9]","");
-                                  try {
-                                   reflect.set(cloumName, Integer.parseInt(val));
-                                  }catch (NumberFormatException e){
+                                val = val.replace("[^0-9]", "");
+                                try {
+                                    reflect.set(cloumName, Integer.parseInt(val));
+                                } catch (NumberFormatException e) {
 
-                                  }
+                                }
 
                             } else {
                                 reflect.set(cloumName, val);
@@ -84,10 +84,10 @@ public class HbaseServiceImpl implements HbaseService {
     };
 
     @Override
-    public <T> List<T> findByExample(Map<String, CompareOp[]> filterParam, Object t ,Class<T> classz) {
+    public <T> List<T> findByExample(Map<String, CompareOp[]> filterParam, Object t, Class<T> classz) {
         Scan scan = new Scan();
         scan.addFamily(HBaseEntity.FAMILY_NAME_BYTES);
-        Reflect reflect =  Reflect.on(t);
+        Reflect reflect = Reflect.on(t);
         //获取静态属性值 static
         Map<String, Reflect> allFieldsStatic = reflect.fields(true);
         //获取非静态属性值
@@ -107,9 +107,9 @@ public class HbaseServiceImpl implements HbaseService {
                             if (campanyOps != null) {
                                 for (CompareOp campanyOp : campanyOps) {
                                     SingleColumnValueFilter filter = new SingleColumnValueFilter(
-                                        HBaseEntity.FAMILY_NAME_BYTES,
-                                        value, campanyOp,
-                                        Bytes.toBytes(s));
+                                            HBaseEntity.FAMILY_NAME_BYTES,
+                                            value, campanyOp,
+                                            Bytes.toBytes(s));
                                     scan.setFilter(filter);
                                 }
                             }
@@ -121,21 +121,20 @@ public class HbaseServiceImpl implements HbaseService {
         });
         tClass = classz;
         List<Object> rows = hbaseTemplate.find(reflect.field("TAB_NAME").toString(), scan, rowMapper);
-        return BeanMapper.mapList(rows,classz);
+        return BeanMapper.mapList(rows, classz);
     }
 
     @Override
-    public <T> List<T> findByExample(Scan scan,Class<T> classz) {
+    public <T> List<T> findByExample(Scan scan, Class<T> classz) {
         Reflect reflect = Reflect.on(classz).create();
         List<Object> rows = hbaseTemplate.find(reflect.field("TAB_NAME").toString(), scan, rowMapper);
-        return BeanMapper.mapList(rows,classz);
+        return BeanMapper.mapList(rows, classz);
     }
 
 
-
     @Override
-    public <T> void save(T t,Class<T> classz) {
-        Reflect reflect =  Reflect.on(classz).create();
+    public <T> void save(T t, Class<T> classz) {
+        Reflect reflect = Reflect.on(classz).create();
         String tableName = reflect.field("TAB_NAME").toString();
         hbaseTemplate.execute(tableName, new TableCallback<String>() {
             @Override
@@ -161,7 +160,8 @@ public class HbaseServiceImpl implements HbaseService {
                                 } else if (cloumValue instanceof String) {
                                     p.addColumn(HBaseEntity.FAMILY_NAME_BYTES, value, Bytes.toBytes((String) cloumValue));
                                 } else if (cloumValue instanceof JSONObject) {
-                                    p.addColumn(HBaseEntity.FAMILY_NAME_BYTES, value, Bytes.toBytes(((JSONObject) cloumValue).toJSONString()));
+                                    p.addColumn(HBaseEntity.FAMILY_NAME_BYTES, value, Bytes.toBytes(((JSONObject) cloumValue)
+                                            .toJSONString()));
                                 }
 
                             }
@@ -173,14 +173,12 @@ public class HbaseServiceImpl implements HbaseService {
             }
 
         });
-            }
+    }
 
 
-
-
-public static void main(String arge[]){
- String  s = "1我我我123   你1231";
-    System.out.println(s.replaceAll("[^0-9]",""));
-}
+//    public static void main(String arge[]) {
+//        String s = "1我我我123   你1231";
+//        System.out.println(s.replaceAll("[^0-9]", ""));
+//    }
 }
 

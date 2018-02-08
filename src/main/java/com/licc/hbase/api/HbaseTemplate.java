@@ -1,4 +1,5 @@
 package com.licc.hbase.api;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.TableName;
@@ -23,6 +24,7 @@ import java.util.concurrent.TimeUnit;
  * @author Costin Leau
  * @author Shaun Elliott
  */
+
 /**
  * JThink@JThink
  *
@@ -130,8 +132,7 @@ public class HbaseTemplate implements HbaseOperations {
                     byte[] family = Bytes.toBytes(familyName);
                     if (StringUtils.isNotBlank(qualifier)) {
                         get.addColumn(family, Bytes.toBytes(qualifier));
-                    }
-                    else {
+                    } else {
                         get.addFamily(family);
                     }
                 }
@@ -198,7 +199,8 @@ public class HbaseTemplate implements HbaseOperations {
             synchronized (this) {
                 if (null == this.connection) {
                     try {
-                        ThreadPoolExecutor poolExecutor = new ThreadPoolExecutor(200, Integer.MAX_VALUE, 60L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
+                        ThreadPoolExecutor poolExecutor = new ThreadPoolExecutor(200, Integer.MAX_VALUE, 60L, TimeUnit.SECONDS, new
+                                SynchronousQueue<Runnable>());
                         // init pool
                         poolExecutor.prestartCoreThread();
                         this.connection = ConnectionFactory.createConnection(configuration, poolExecutor);

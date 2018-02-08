@@ -27,7 +27,7 @@ public class HbaseServiceTests {
   @Test
   public  void  test(){
     SCnMadeInChina sCnMadeInChinaQuery = new SCnMadeInChina();
-    sCnMadeInChinaQuery.setAppendTime("1513158597822");
+    sCnMadeInChinaQuery.setAppendTime("1518072793000");
     Map<String , CompareOp[]> filterParam =  new HashMap<>();
     filterParam.put("appendTime", new CompareOp[]{CompareOp.GREATER_OR_EQUAL});
     List<SCnMadeInChina> madeInChinaList = hbaseService.findByExample(filterParam,sCnMadeInChinaQuery,SCnMadeInChina.class);
